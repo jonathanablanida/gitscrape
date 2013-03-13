@@ -1,0 +1,35 @@
+{
+  "name": "gitscrape",
+  "version": "0.0.1",
+  "description": "Tool for building advanced searches of your git history.",
+  "keywords": [
+    "git",
+    "history",
+    "test",
+    "gitscrape",
+    "commit",
+    "date"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/applepicke/gitscrape.git"
+  },
+  "author": {
+    "name": "Willy Collins",
+    "email": "wcurtiscollins@gmail.com"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "should": "*",
+    "mocha": "*"
+  },
+  "main": "index",
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "bin": {
+    "gitscrape": "./bin/gitscrape"
+  },
+  "readme": "ERROR: No README.md file found!"
+}
