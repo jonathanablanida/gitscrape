@@ -19,6 +19,7 @@
     "email": "wcurtiscollins@gmail.com"
   },
   "dependencies": {
+    "optimist": "*"
   },
   "devDependencies": {
     "should": "*",
