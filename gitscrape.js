@@ -48,5 +48,5 @@ var redirectOutput = function (process) {
 };
 
 exports.run = run;
-exports.find = find;
+exports.find = findCommits;
 
