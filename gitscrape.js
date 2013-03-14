@@ -1,13 +1,14 @@
+var fs 		 = require('fs');
+var ps		 = require('child_process')
+var optimist = require('optimist');
+
 /**
  * Run cli
  */
-var optimist = require('optimist');
-
-exports.run = function () {
+var run = function () {
 	var args = getArgs();
+    git(args._);
 
-	console.log('Welcome to gitscrape!!');
-	console.log(argv);
 };
 
 /**
@@ -20,6 +21,32 @@ var getArgs = function () {
 };
 
 var find = function (expression) {
+    cmd = "log --grep=" + expression;
+	git(cmd);
+};
+
+var git = function (cmd) {
+
+    if (typeof cmd === 'string') {
+        cmd = cmd.split(' ');
+    }
+
+	gitcmd = ps.spawn('git', cmd);
+	redirectOutput(gitcmd);
+};
+
+var redirectOutput = function (process) {
+
+	process.stdout.on('data', function(data) {
+		console.log('' + data);
+	});
+
+	process.stderr.on('data', function(data) {
+		console.log('' + data);
+	});
 
 };
+
+exports.run = run;
+exports.find = find;
 
