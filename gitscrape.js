@@ -1,12 +1,15 @@
 var fs 		 = require('fs');
-var ps		 = require('child_process')
-var optimist = require('optimist');
+var ps		 = require('child_process');
 
 /**
  * Run cli
  */
 var run = function () {
+
+    // Only require optimist when running the CLI
+    var optimist = require('optimist');
 	var args = getArgs();
+
     findCommits(args._);
 
 };
@@ -22,7 +25,7 @@ var getArgs = function () {
 
 var findCommits = function (expression, options) {
     cmd = "log --grep=" + expression;
-	git(cmd);
+	return git(cmd);
 };
 
 var git = function (cmd) {
@@ -32,10 +35,12 @@ var git = function (cmd) {
     }
 
 	gitcmd = ps.spawn('git', cmd);
-	redirectOutput(gitcmd);
+    results = redirectToObject(gitcmd);
+
+    return results
 };
 
-var redirectOutput = function (process) {
+var redirectToScreen = function (process) {
 
 	process.stdout.on('data', function(data) {
 		console.log('' + data);
@@ -45,6 +50,23 @@ var redirectOutput = function (process) {
 		console.log('' + data);
 	});
 
+};
+
+var redirectToObject = function (process, object) {
+
+    object = object || {};
+    object.stdout = [];
+    object.stderr = [];
+
+    process.stdout.on('data', function(data) {
+        object.stdout.push('' + data);
+    });
+
+    process.stderr.on('data', function(data) {
+        object.stderr.push('' + data);
+    });
+
+    return object;
 };
 
 exports.run = run;
