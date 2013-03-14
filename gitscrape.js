@@ -7,7 +7,7 @@ var optimist = require('optimist');
  */
 var run = function () {
 	var args = getArgs();
-    git(args._);
+    findCommits(args._);
 
 };
 
@@ -20,7 +20,7 @@ var getArgs = function () {
 	return argv;
 };
 
-var find = function (expression) {
+var findCommits = function (expression, options) {
     cmd = "log --grep=" + expression;
 	git(cmd);
 };
