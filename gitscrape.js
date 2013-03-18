@@ -50,14 +50,14 @@ var Gitscrape = (function () {
             /**
              * Functions that will format output in special ways
              */
-            function log (data) {
+            function objecter (data) {
                 var details = {};
                 var currentKey = null; // The details key currently being added to
 
                 outputs = data.toString().split('\n');
 
                 _.each(outputs, function (line) {
-                    var matches = line.match(/^\s*\w+:/g);
+                    var matches = line.match(/^\s*[\w\s]+:/g);
 
                     // Add the detail item from the commit as a property
                     if (matches) {
@@ -92,8 +92,7 @@ var Gitscrape = (function () {
             /**
              * Actually grab the data from the process streams
              */
-            var fn = log;
-            process.stdout.on('data', log);
+            process.stdout.on('data', objecter);
 
             process.stderr.on('data', function(data) {
                 object.stderr.push('' + data);
@@ -137,7 +136,7 @@ var CLI = (function () {
             // Only require optimist when running the CLI
             var args = _this.getArgs();
 
-            scraper.findCommits(args._, null, function (err, results) {
+            scraper.findCommits(args._[0], null, function (err, results) {
                 console.log(results);
             });
 
