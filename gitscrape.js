@@ -1,5 +1,7 @@
+var _        = require('underscore');
 var fs 		 = require('fs');
 var ps		 = require('child_process');
+
 
 
 var Gitscrape = (function () {
@@ -49,7 +51,41 @@ var Gitscrape = (function () {
              * Functions that will format output in special ways
              */
             function log (data) {
-                object.stdout.push('' + data);
+                var details = {};
+                var currentKey = null; // The details key currently being added to
+
+                outputs = data.toString().split('\n');
+
+                _.each(outputs, function (line) {
+                    var matches = line.match(/^\s*\w+:/g);
+
+                    // Add the detail item from the commit as a property
+                    if (matches) {
+
+                        //Only take fist match (since regex only grabs beginning of string)
+                        var match = matches[0].trim();
+                        var key = match.slice(0, match.length-1).toLowerCase();
+                        var value = line.slice(line.indexOf(match) + match.length).trim();
+
+                        details[key] = value || [];
+                        currentKey = key;
+
+                    }
+                    // Add the line as an item under the detail key
+                    else {
+                        BULLET_REGEX = /^\s*(\*+|\-+|\d+\.|\w\.)/g;
+
+                        if (currentKey && line.match(BULLET_REGEX)) {
+
+                            if (typeof details[currentKey] !== 'array') {
+                                details[currentKey] = [];
+                            }
+                            details[currentKey].push(line.trim());
+                        }
+                    }
+                });
+
+                object.stdout.push(details);
             };
 
 
@@ -80,6 +116,7 @@ var Gitscrape = (function () {
 }());
 
 var CLI = (function () {
+
     var optimist = require('optimist');
 
     var _this = null;
