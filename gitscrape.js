@@ -116,8 +116,6 @@ var Gitscrape = (function () {
 
 var CLI = (function () {
 
-    var optimist = require('optimist');
-
     var _this = null;
     var scraper = Gitscrape;
 
@@ -133,10 +131,9 @@ var CLI = (function () {
          */
         run: function () {
 
-            // Only require optimist when running the CLI
             var args = _this.getArgs();
 
-            scraper.findCommits(args._[0], null, function (err, results) {
+            scraper.findCommits(args.tag, null, function (err, results) {
                 console.log(results);
             });
 
@@ -147,8 +144,45 @@ var CLI = (function () {
          */
         getArgs: function () {
 
-            argv = optimist.argv;
-            return argv;
+            var ArgumentParser = require('argparse').ArgumentParser;
+
+            var argurator = new ArgumentParser({
+                addHelp:true,
+                description: 'Compile git commit history based on keywords'
+            });
+
+            argurator.addArgument(
+                [ '-s', '--since' ],
+                {
+                    help: 'Return commits since DATE.'
+                }
+            );
+
+            argurator.addArgument(
+                [ '-k', '--keyword' ],
+                {
+                    help: 'Only return commits that contain KEYWORD in their message.'
+                }
+            );
+
+            argurator.addArgument(
+                ['tag'],
+                {
+                    help: 'The commit message TAG that forms the basis of the results. Git commit TAGS should always be in the form of \'TAG:\', followed by a list of items denoted by \'-\', \'*\', or numbers like \'1.\'.'
+                }
+            );
+
+            var args = argurator.parseArgs();
+            console.log(args);
+            return args;
+
+        },
+
+        /**
+         * Format the result data
+         */
+        formatOutput: function (data) {
+
         }
 
     };
