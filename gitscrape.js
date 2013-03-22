@@ -15,8 +15,12 @@ var Gitscrape = (function () {
     selfie.prototype = {
 
         findCommits: function (expression, options, done) {
-            cmd = "log --grep=" + expression;
 
+
+            var cmd = "--no-pager log"
+            if (expression) {
+                cmd += " -i --grep=" + expression;
+            }
 
             if (typeof cmd === 'string') {
                 cmd = cmd.split(' ');
@@ -77,14 +81,13 @@ var Gitscrape = (function () {
 
                         if (currentKey && line.match(BULLET_REGEX)) {
 
-                            if (typeof details[currentKey] !== 'array') {
+                            if ( !_.isArray(details[currentKey]) ) {
                                 details[currentKey] = [];
                             }
                             details[currentKey].push(line.trim());
                         }
                     }
                 });
-
                 object.stdout.push(details);
             };
 
@@ -133,8 +136,8 @@ var CLI = (function () {
 
             var args = _this.getArgs();
 
-            scraper.findCommits(args.tag, null, function (err, results) {
-                console.log(results);
+            scraper.findCommits(args.keyword, null, function (err, results) {
+                _this.formatOutput(results, args.tag);
             });
 
         },
@@ -173,7 +176,8 @@ var CLI = (function () {
             );
 
             var args = argurator.parseArgs();
-            console.log(args);
+            args.tag = args.tag.toLowerCase()
+
             return args;
 
         },
@@ -181,8 +185,30 @@ var CLI = (function () {
         /**
          * Format the result data
          */
-        formatOutput: function (data) {
+        formatOutput: function (data, tag) {
+            var commits = data.stdout;
+            _.each(commits, function (commit) {
+                // Separate author name and email
+                var emailStart = commit.author.lastIndexOf('<');
 
+                var email = commit.author.slice( emailStart ).trim();
+                var name = commit.author.slice(0, emailStart).trim();
+                var author = { name: name, email: email };
+
+
+                var date = commit.date
+                var item = commit[tag]
+
+                if (_.isArray( item )) {
+                    _.each(item, function (entry) {
+                        var text = ''
+                        text += '(' + author.name + ') '
+                        text += entry
+                        console.log(text);
+                    });
+                }
+
+            });
         }
 
     };
