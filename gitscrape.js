@@ -55,12 +55,23 @@ var Gitscrape = (function () {
              * Functions that will format output in special ways
              */
             function objecter (data) {
-                var details = {};
+                var details = null;
                 var currentKey = null; // The details key currently being added to
 
                 outputs = data.toString().split('\n');
 
                 _.each(outputs, function (line) {
+
+                    // create object for beginning of each commit
+                    if (line.indexOf('commit') === 0){
+
+                        if (details) {
+                            object.stdout.push(details);
+                        }
+
+                        details = {}
+                    }
+
                     var matches = line.match(/^\s*[\w\s]+:/g);
 
                     // Add the detail item from the commit as a property
@@ -88,7 +99,6 @@ var Gitscrape = (function () {
                         }
                     }
                 });
-                object.stdout.push(details);
             };
 
 
