@@ -31,13 +31,8 @@ var Gitscrape = (function () {
                 cmd.push(options.until);
             }
 
-            if (expression) {
-                cmd.push("-i");
-                cmd.push("--grep=" + expression);
-            }
-
             gitcmd = ps.spawn('git', cmd);
-            results = _this.parseOutput(gitcmd, null, done);
+            results = _this.parseOutput(gitcmd, options, done);
 
             return results
         },
@@ -105,6 +100,12 @@ var Gitscrape = (function () {
                             if ( !_.isArray(details[currentKey]) ) {
                                 details[currentKey] = [];
                             }
+
+                            // If keyword option is enabled, make sure keyword exists
+                            if (options.keyword && line.indexOf(options.keyword) < 0) {
+                                return;
+                            }
+
                             details[currentKey].push(line.trim());
                         }
                     }
