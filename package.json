@@ -1,6 +1,6 @@
 {
   "name": "gitscrape",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Tool for building advanced searches of your git history.",
   "keywords": [
     "git",
