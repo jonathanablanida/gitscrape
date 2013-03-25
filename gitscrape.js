@@ -26,12 +26,15 @@ var Gitscrape = (function () {
                 cmd.push(options.since);
             }
 
+            if (options.until !== null) {
+                cmd.push("--until");
+                cmd.push(options.until);
+            }
+
             if (expression) {
                 cmd.push("-i");
                 cmd.push("--grep=" + expression);
             }
-
-            console.log(cmd);
 
             gitcmd = ps.spawn('git', cmd);
             results = _this.parseOutput(gitcmd, null, done);
@@ -153,11 +156,7 @@ var CLI = (function () {
 
             var args = _this.getArgs();
 
-            var options = {
-                since: args.since
-            };
-
-            scraper.findCommits(args.keyword, options, function (err, results) {
+            scraper.findCommits(args.keyword, args, function (err, results) {
                 _this.formatOutput(results, args.tag);
             });
 
@@ -178,7 +177,14 @@ var CLI = (function () {
             argurator.addArgument(
                 [ '-s', '--since' ],
                 {
-                    help: 'Return commits since DATE.'
+                    help: 'Return commits after DATE.'
+                }
+            );
+
+            argurator.addArgument(
+                [ '-u', '--until' ],
+                {
+                    help: 'Return commits before DATE.'
                 }
             );
 
