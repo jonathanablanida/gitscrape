@@ -16,15 +16,22 @@ var Gitscrape = (function () {
 
         findCommits: function (expression, options, done) {
 
+            var cmd = [];
 
-            var cmd = "--no-pager log"
+            cmd.push("--no-pager");
+            cmd.push("log");
+
+            if (options.since !== null) {
+                cmd.push("--since");
+                cmd.push(options.since);
+            }
+
             if (expression) {
-                cmd += " -i --grep=" + expression;
+                cmd.push("-i");
+                cmd.push("--grep=" + expression);
             }
 
-            if (typeof cmd === 'string') {
-                cmd = cmd.split(' ');
-            }
+            console.log(cmd);
 
             gitcmd = ps.spawn('git', cmd);
             results = _this.parseOutput(gitcmd, null, done);
@@ -146,7 +153,11 @@ var CLI = (function () {
 
             var args = _this.getArgs();
 
-            scraper.findCommits(args.keyword, null, function (err, results) {
+            var options = {
+                since: args.since
+            };
+
+            scraper.findCommits(args.keyword, options, function (err, results) {
                 _this.formatOutput(results, args.tag);
             });
 
